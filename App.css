@@ -1,0 +1,236 @@
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.App {
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header styles */
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+}
+
+.App-header h1 {
+  margin-bottom: 15px;
+}
+
+.mode-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.mode-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #4a4a4a;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.mode-button:hover {
+  background-color: #5a5a5a;
+}
+
+.mode-button.active {
+  background-color: #61dafb;
+  color: #282c34;
+}
+
+/* Main content styles */
+.App-main {
+  flex: 1;
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-bottom: 30px;
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 768px) {
+  .container {
+    flex-direction: row;
+  }
+}
+
+.recorder-section, .detector-section {
+  flex: 1;
+  padding: 15px;
+}
+
+.recorder-section {
+  border-right: none;
+  border-bottom: 1px solid #eee;
+}
+
+@media (min-width: 768px) {
+  .recorder-section {
+    border-right: 1px solid #eee;
+    border-bottom: none;
+  }
+}
+
+/* Audio recorder styles */
+.audio-recorder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.recording-controls {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.mic-visualization {
+  width: 100%;
+  height: 100px;
+  margin: 15px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.sound-wave {
+  width: 100%;
+  height: 100%;
+}
+
+.control-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.record-button, .stop-button, .play-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.record-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.stop-button {
+  background-color: #F44336;
+  color: white;
+}
+
+.play-button {
+  background-color: #2196F3;
+  color: white;
+}
+
+.record-button:hover, .stop-button:hover, .play-button:hover {
+  opacity: 0.9;
+}
+
+/* Truth/Lie detector styles */
+.truth-lie-detector {
+  padding: 15px;
+}
+
+.result-text {
+  margin: 20px 0;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.confidence-level {
+  margin-bottom: 15px;
+  font-style: italic;
+}
+
+.meter-container {
+  position: relative;
+  width: 100%;
+  height: 30px;
+  background-color: #e0e0e0;
+  border-radius: 15px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.probability {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+/* Instructions section */
+.instructions {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.instructions h3 {
+  margin-bottom: 15px;
+  color: #282c34;
+}
+
+.instructions p {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+/* Footer styles */
+.App-footer {
+  background-color: #282c34;
+  color: white;
+  padding: 15px;
+  font-size: 14px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .App-header h1 {
+    font-size: 24px;
+  }
+  
+  .mode-button {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+  
+  .result-text {
+    font-size: 24px;
+  }
+}

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truth/Lie Detector</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .app {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: #282c34;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .mode-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .mode-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #4a4a4a;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .mode-button:hover {
+            background-color: #5a5a5a;
+        }
+        
+        .mode-button.active {
+            background-color: #61dafb;
+            color: #282c34;
+        }
+        
+        main {
+            background-color: white;
+            padding: 20px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+            }
+        }
+        
+        .recorder-section, .detector-section {
+            flex: 1;
+            padding: 15px;
+        }
+        
+        .recorder-section {
+            border-right: none;
+            border-bottom: 1px solid #eee;
+        }
+        
+        @media (min-width: 768px) {
+            .recorder-section {
+                border-right: 1px solid #eee;
+                border-bottom: none;
+            }
+        }
+        
+        .audio-recorder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .recording-controls {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .visualizer {
+            width: 100%;
+            height: 100px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            background-color: #f9f9f9;
+        }
+        
+        .control-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .record-button, .stop-button, .play-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .record-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .stop-button {
+            background-color: #F44336;
+            color: white;
+        }
+        
+        .play-button {
+            background-color: #2196F3;
+            color: white;
+        }
+        
+        .record-button:hover, .stop-button:hover, .play-button:hover {
+            opacity: 0.9;
+        }
+        
+        .truth-lie-detector {
+            padding: 15px;
+        }
+        
+        .result-text {
+            margin: 20px 0;
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .confidence-level {
+            margin-bottom: 15px;
+            font-style: italic;
+            text-align: center;
+        }
+        
+        .meter-container {
+            position: relative;
+            width: 100%;
+            height: 30px;
+            background-color: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .meter-scale {
+            display: flex;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            justify-content: space-between;
+            padding: 0 10px;
+            box-sizing: border-box;
+            align-items: center;
+            color: #333;
+            font-weight: bold;
+            font-size: 12px;
+            z-index: 2;
+        }
+        
+        .meter-fill {
+            width: 50%;
+            height: 100%;
+            background-color: #FFC107;
+            transition: width 0.5s ease, background-color 0.5s ease;
+            border-radius: 15px;
+            z-index: 1;
+        }
+        
+        .meter-marker {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background-color: #000;
+            transform: translateX(-2px);
+            transition: left 0.5s ease;
+            z-index: 3;
+        }
+        
+        .probability {
+            margin-top: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .instructions {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .instructions h3 {
+            margin-bottom: 15px;
+            color: #282c34;
+        }
+        
+        .instructions p {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        footer {
+            background-color: #282c34;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 14px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+        
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <header>
+            <h1>Truth/Lie Detector</h1>
+            <div class="mode-toggle">
+                <button id="realTimeMode" class="mode-button active">✓ Real-time Mode</button>
+                <button id="recordedMode" class="mode-button">Recorded Mode</button>
+            </div>
+        </header>
+        
+        <main>
+            <div class="container">
+                <div class="recorder-section">
+                    <div class="audio-recorder">
+                        <h3>Audio Recording</h3>
+                        <div class="visualizer">
+                            <canvas id="audioVisualizer"></canvas>
+                        </div>
+                        <div class="control-buttons">
+                            <button id="startRecording" class="record-button">Start Recording</button>
+                            <button id="stopRecording" class="stop-button" style="display: none;">Stop Recording</button>
+                            <button id="playRecording" class="play-button" style="display: none;">Play Recording</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detector-section">
+                    <div class="truth-lie-detector">
+                        <h3>Detection Results</h3>
+                        <div id="resultText" class="result-text" style="color: #FFC107;">WAITING</div>
+                        <div id="confidenceLevel" class="confidence-level">Confidence: Low</div>
+                        
+                        <div class="meter-container">
+                            <div class="meter-scale">
+                                <span>LIE</span>
+                                <span>UNCERTAIN</span>
+                                <span>TRUTH</span>
+                            </div>
+                            <div id="meterFill" class="meter-fill"></div>
+                            <div id="meterMarker" class="meter-marker"></div>
+                        </div>
+                        
+                        <div id="probability" class="probability">Truth Probability: 50%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="instructions">
+                <h3>How to Use</h3>
+                <p id="modeInstructions">
+                    Click "Start Recording" and speak. The detector will analyze your voice in real-time.
+                </p>
+                <p><strong>Note:</strong> This is a demonstration and not a scientifically accurate truth/lie detector.</p>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Truth/Lie Detector - For demonstration purposes only</p>
+        </footer>
+    </div>
+    
+    <script>
+        // DOM Elements
+        const startRecordingBtn = document.getElementById('startRecording');
+        const stopRecordingBtn = document.getElementById('stopRecording');
+        const playRecordingBtn = document.getElementById('playRecording');
+        const realTimeModeBtn = document.getElementById('realTimeMode');
+        const recordedModeBtn = document.getElementById('recordedMode');
+        const resultText = document.getElementById('resultText');
+        const confidenceLevel = document.getElementById('confidenceLevel');
+        const meterFill = document.getElementById('meterFill');
+        const meterMarker = document.getElementById('meterMarker');
+        const probability = document.getElementById('probability');
+        const modeInstructions = document.getElementById('modeInstructions');
+        const canvas = document.getElementById('audioVisualizer');
+        const canvasCtx = canvas.getContext('2d');
+        
+        // Application State
+        let isRecording = false;
+        let audioContext = null;
+        let mediaRecorder = null;
+        let audioStream = null;
+        let recordedChunks = [];
+        let recordedAudio = null;
+        let analyser = null;
+        let dataArray = null;
+        let mode = 'real-time';
+        let animationId = null;
+        
+        // Initialize canvas size
+        function resizeCanvas() {
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        // Mode toggle
+        realTimeModeBtn.addEventListener('click', () => {
+            mode = 'real-time';
+            realTimeModeBtn.classList.add('active');
+            recordedModeBtn.classList.remove('active');
+            modeInstructions.textContent = 'Click "Start Recording" and speak. The detector will analyze your voice in real-time.';
+        });
+        
+        recordedModeBtn.addEventListener('click', () => {
+            mode = 'recorded';
+            recordedModeBtn.classList.add('active');
+            realTimeModeBtn.classList.remove('active');
+            modeInstructions.textContent = 'Click "Start Recording", speak, then "Stop Recording". The detector will analyze your recording.';
+        });
+        
+        // Start recording
+        startRecordingBtn.addEventListener('click', async () => {
+            try {
+                // Reset UI
+                resultText.textContent = 'ANALYZING...';
+                resultText.style.color = '#FFC107';
+                confidenceLevel.textContent = 'Confidence: Low';
+                meterFill.style.width = '50%';
+                meterFill.style.backgroundColor = '#FFC107';
+                meterMarker.style.left = '50%';
+                probability.textContent = 'Truth Probability: 50%';
+                
+                // Initialize audio context if not already created
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioContext.createAnalyser();
+                    analyser.fftSize = 256;
+                    const bufferLength = analyser.frequencyBinCount;
+                    dataArray = new Uint8Array(bufferLength);
+                }
+                
+                // Get microphone access
+                audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                
+                // Connect to analyzer for visualization
+                const source = audioContext.createMediaStreamSource(audioStream);
+                source.connect(analyser);
+                
+                // Start visualization
+                visualize();
+                
+                // Setup media recorder
+                mediaRecorder = new MediaRecorder(audioStream);
+                recordedChunks = [];
+                
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) {
+                        recordedChunks.push(e.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+                    if (recordedAudio) {
+                        URL.revokeObjectURL(recordedAudio);
+                    }
+                    recordedAudio = URL.createObjectURL(blob);
+                    
+                    // Show play button for recorded mode
+                    if (mode === 'recorded') {
+                        playRecordingBtn.style.display = 'inline-block';
+                        // Analyze the recorded audio
+                        analyzeAudio();
+                    }
+                };
+                
+                // Start recording
+                mediaRecorder.start();
+                isRecording = true;
+                
+                // Update UI
+                startRecordingBtn.style.display = 'none';
+                stopRecordingBtn.style.display = 'inline-block';
+                playRecordingBtn.style.display = 'none';
+                
+                // For real-time mode, start periodic analysis
+                if (mode === 'real-time') {
+                    // Simulate analysis every 1 second
+                    const analysisInterval = setInterval(() => {
+                        if (isRecording) {
+                            analyzeAudio();
+                        } else {
+                            clearInterval(analysisInterval);
+                        }
+                    }, 1000);
+                }
+                
+            } catch (error) {
+                console.error('Error accessing microphone:', error);
+                alert('Error accessing microphone. Please ensure you have granted microphone permissions.');
+            }
+        });
+        
+        // Stop recording
+        stopRecordingBtn.addEventListener('click', () => {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                
+                // Stop all tracks in the stream
+                if (audioStream) {
+                    audioStream.getTracks().forEach(track => track.stop());
+                }
+                
+                // Cancel animation
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                    animationId = null;
+                }
+                
+                // Update UI
+                startRecordingBtn.style.display = 'inline-block';
+                stopRecordingBtn.style.display = 'none';
+                
+                // Clear canvas
+                canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        });
+        
+        // Play recorded audio
+        playRecordingBtn.addEventListener('click'
+(Content truncated due to size limit. Use line ranges to read in chunks)
